@@ -3,13 +3,13 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { ImageBackground, Text, Image, View, Button } from "react-native";
 
 import Login from "./src/components/Login/Login";
-import Main from "./src/components/Main/Main";
+import Home from "./src/components/Home/Home";
 import Register from "./src/components/Register/Register";
 // import ReactIntro from "./src/components/ReactIntro/ReactIntro";
 
 const MainNavigator = createStackNavigator(
   {
-    Home: Main,
+    Home: Home,
     Login: Login,
     Register: Register
   },

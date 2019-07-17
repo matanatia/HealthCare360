@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { name as appName } from '../../../app.json';
 
-const Main = ({navigation}) => {
+const Home = ({navigation}) => {
 
   const onPress = (pageName) => {
     navigation.navigate(pageName);
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Main;
+export default Home;
