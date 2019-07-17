@@ -23,7 +23,7 @@ const Home = ({navigation}) => {
 }
 
 //set navigationOptions
-// Main.navigationOptions = {
+// Home.navigationOptions = {
 //   title: "Main"
 // };
 
