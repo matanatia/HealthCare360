@@ -44,7 +44,7 @@ const Login = ({ navigation }) => {
         console.log(error);
       });
       //redirect the user to main page
-      redirect('Home');
+      redirect('App');
     }
     else {
       //show the user an error msg

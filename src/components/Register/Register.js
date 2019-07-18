@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { name as appName } from '../../../app.json';
+import Storage from "../../models/Storage";
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
 
   //testing using react hooks
   const [fullName, setFullName] = useState("");
@@ -10,8 +11,64 @@ const Register = ({navigation}) => {
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
 
-  const onPress = (pageName) => {
+  const redirect = (pageName) => {
     navigation.navigate(pageName);
+  }
+
+  const ifExsit = () => {
+    //check and user in the server
+    const server_user_email = "test";
+
+    if (server_user_email === email) {
+      return true;
+    }
+    return false;
+  }
+
+  const registerUser = () => {
+    const user = { fullName, email, password, confPassword };
+    //save user data in the server 
+    // .............. 
+    //if success save at the server 
+      //update storage that the user connected
+      Storage.setItem("userToken", "1")
+      .catch(function(error) {
+        console.log(error);
+      });
+      //redirect the user to main page
+      redirect('AuthLoading');
+  }
+
+  const register = () => {
+    //check if user name && password in the inputs field - before check validation in the server
+    if (fullName === "") {
+      Alert.alert("Full Name is required");
+      return;
+    }
+
+    if (email === "") {
+      Alert.alert("Email is required");
+      return;
+    }
+
+    if (password === "") {
+      Alert.alert("Password is required");
+      return;
+    }
+
+    if (confPassword === "" || confPassword !== password) {
+      Alert.alert("Please confirm your password");
+      return;
+    }
+
+    //check if the user already exsit in the server
+    if (ifExsit()) {
+      Alert.alert("User name already exist, please choose other name");
+      return;
+    }
+
+    //save user data in the server 
+    registerUser();
   }
 
   return (
@@ -41,11 +98,11 @@ const Register = ({navigation}) => {
           onChangeText={(text) => setConfPassword(text)}
           secureTextEntry={true} />
 
-        <TouchableOpacity onPress={() => onPress('Home')} style={[styles.btn, { backgroundColor: 'green' }]}>
+        <TouchableOpacity onPress={() => register()} style={[styles.btn, { backgroundColor: 'green' }]}>
           <Text style={[styles.btnText, { color: 'white' }]}>Register</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => onPress('Login')} style={{}}>
+        <TouchableOpacity onPress={() => redirect('Login')} style={{}}>
           <Text style={{ color: 'green' }}>Back to Login Page</Text>
         </TouchableOpacity>
       </View >
