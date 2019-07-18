@@ -23,23 +23,23 @@ const Register = ({navigation}) => {
 
         <TextInput style={styles.input}
           placeholder="Full Name"
-          onChangeText={(text) => setFullName({ text })}
+          onChangeText={(text) => setFullName(text)}
           value={fullName} />
 
         <TextInput style={styles.input}
           placeholder="Email address"
-          onChangeText={(text) => setEmail({ text })}
+          onChangeText={(text) => setEmail(text)}
           value={email} />
 
         <TextInput style={styles.input}
           placeholder="Your Password"
-          onChangeText={(text) => setPassword({ text })}
-          value={password} />
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry={true} />
 
         <TextInput style={styles.input}
           placeholder="Confirm Password"
-          onChangeText={(text) => setConfPassword({ text })}
-          value={confPassword} />
+          onChangeText={(text) => setConfPassword(text)}
+          secureTextEntry={true} />
 
         <TouchableOpacity onPress={() => onPress('Home')} style={[styles.btn, { backgroundColor: 'green' }]}>
           <Text style={[styles.btnText, { color: 'white' }]}>Register</Text>

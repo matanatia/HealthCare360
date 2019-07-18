@@ -1,20 +1,55 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { name as appName } from '../../../app.json';
+import Storage from "../../models/Storage";
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
 
   //testing using react hooks
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  navigationOptions = {
-    header: null
+  const redirect = (pageName) => {
+    navigation.navigate(pageName);
   }
 
-  //header at the page is null
-  const onPress = (pageName) => {
-    navigation.navigate(pageName);
+  const validatCred = () => {
+    //check and user in the server
+    const valid_user_name = "test";
+    const valid_pass = "test";
+
+    if (valid_user_name === userName && valid_pass === password) {
+      return true;
+    }
+    return false;
+  }
+
+  const login = () => {
+    //ceck if user name && password in the inputs field - before check validation in the server
+    if (userName === "") {
+      Alert.alert("User name is required");
+      return;
+    }
+
+    if (password === "") {
+      Alert.alert("Password is required");
+      return;
+    }
+
+    //check if the user login is currect
+    if (validatCred()) {
+      //update storage that the user connected
+      Storage.setItem("userToken", "1")
+      .catch(function(error) {
+        console.log(error);
+      });
+      //redirect the user to main page
+      redirect('Home');
+    }
+    else {
+      //show the user an error msg
+      Alert.alert("User name or password is incorrect");
+    }
   }
 
   return (
@@ -25,20 +60,21 @@ const Login = ({navigation}) => {
 
         <TextInput style={styles.input}
           placeholder="User Name"
-          onChangeText={(text) => setUserName({ text })}
+          onChangeText={(text) => setUserName(text)}
           value={userName} />
 
         <TextInput style={styles.input}
           placeholder="Password"
-          onChangeText={(text) => setPassword({ text })}
-          value={password} />
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry={true}
+        />
 
-        <TouchableOpacity onPress={() => onPress('Home')} style={[styles.btn, { backgroundColor: 'green' }]}>
+        <TouchableOpacity onPress={() => login()} style={[styles.btn, { backgroundColor: 'green' }]}>
           <Text style={[styles.btnText, { color: 'white' }]}>Login</Text>
         </TouchableOpacity>
 
         <Text>Not registered?</Text>
-        <TouchableOpacity onPress={() => onPress('Register')} style={{}}>
+        <TouchableOpacity onPress={() => redirect('Register')} style={{}}>
           <Text style={{ color: 'green' }}>Create an account</Text>
         </TouchableOpacity>
 

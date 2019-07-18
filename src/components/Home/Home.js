@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { name as appName } from '../../../app.json';
+import Storage from "../../models/Storage";
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
 
-  const onPress = (pageName) => {
+  const redirect = (pageName) => {
     navigation.navigate(pageName);
+  }
+
+  const LogOut = async () => {
+    try {
+      await Storage.removeItem('userToken');
+      redirect("Auth");
+    }
+    catch (error) {
+      Alert.alert("Error: ", error.message);
+    }
   }
 
   return (
     <ImageBackground source={require('../../assets/background.jpg')} style={{ width: "100%", height: "100%" }}>
-    <View style={styles.container}>
-      <Text style={[styles.h1, {color: "black"}]}>Welcome to</Text>
-      <Text style={styles.h1}>{appName}</Text>
+      <View style={styles.container}>
+        <Text style={[styles.h1, { color: "black" }]}>Welcome to</Text>
+        <Text style={styles.h1}>{appName}</Text>
 
-      <TouchableOpacity onPress={() => onPress('Login')} style={[styles.btn, { backgroundColor: 'green' }]}>
-        <Text style={[styles.btnText, { color: 'white' }]}>Log out</Text>
-      </TouchableOpacity>
-    </View >
+        <TouchableOpacity onPress={() => LogOut()} style={[styles.btn, { backgroundColor: 'green' }]}>
+          <Text style={[styles.btnText, { color: 'white' }]}>Log out</Text>
+        </TouchableOpacity>
+      </View >
     </ImageBackground >
   );
 }
