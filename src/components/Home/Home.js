@@ -12,7 +12,7 @@ const Home = ({ navigation }) => {
   const LogOut = async () => {
     try {
       await Storage.removeItem('userToken');
-      redirect("Auth");
+      redirect("AuthLoading");
     }
     catch (error) {
       Alert.alert("Error: ", error.message);
