@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, A
 import { name as appName } from '../../../app.json';
 import Storage from "../../models/Storage";
 
+const comIp = "192.168.1.185";
+const endPoint = `http://${comIp}:5000/api/auth`;
+
 const Login = ({ navigation }) => {
 
   //testing using react hooks
@@ -13,21 +16,32 @@ const Login = ({ navigation }) => {
     navigation.navigate(pageName);
   }
 
-  const validatCred = () => {
-    //check and user in the server
-    const valid_user_name = "test";
-    const valid_pass = "test";
-
-    if (valid_user_name === userName && valid_pass === password) {
-      return true;
-    }
-    return false;
+  const authenticateUser = () => {
+    return fetch(`${endPoint}/login`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: userName,
+        password
+      })
+    });
   }
 
-  const login = () => {
-    //ceck if user name && password in the inputs field - before check validation in the server
+
+
+  const login = async () => {
+    //check inputs field before check validation in the server
     if (userName === "") {
       Alert.alert("User name is required");
+      return;
+    }
+
+    const email_reg = /\S+@\S+\.\S+/;
+    if (!email_reg.test(userName)) {
+      Alert.alert("User name format is incorrect.\nPlease enter your email address");
       return;
     }
 
@@ -36,19 +50,26 @@ const Login = ({ navigation }) => {
       return;
     }
 
-    //check if the user login is currect
-    if (validatCred()) {
-      //update storage that the user connected
+    try {
+      const res = await authenticateUser();
+      //if failed to login at the server
+      if (res.status !== 200) {
+        const data = await res.json();
+        Alert.alert(data.message);
+        return;
+      }
+
+      //login successfully - update storage that the user connected
       Storage.setItem("userToken", "1")
-      .catch(function(error) {
-        console.log(error);
-      });
+        .catch(function (error) {
+          console.log(error);
+        });
       //redirect the user to main page
       redirect('App');
-    }
-    else {
-      //show the user an error msg
-      Alert.alert("User name or password is incorrect");
+
+    } catch (error) {
+      alert(error.message);
+      return;
     }
   }
 

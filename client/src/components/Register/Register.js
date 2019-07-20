@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, A
 import { name as appName } from '../../../app.json';
 import Storage from "../../models/Storage";
 
+const comIp = "192.168.1.185";
+const endPoint = `http://${comIp}:5000/api/auth`;
+
 const Register = ({ navigation }) => {
 
   //testing using react hooks
@@ -26,20 +29,19 @@ const Register = ({ navigation }) => {
   }
 
   const registerUser = () => {
-    const user = { fullName, email, password, confPassword };
-    //save user data in the server 
-    // .............. 
-    //if success save at the server 
-      //update storage that the user connected
-      Storage.setItem("userToken", "1")
-      .catch(function(error) {
-        console.log(error);
-      });
-      //redirect the user to main page
-      redirect('AuthLoading');
+    const user = { full_name: fullName, email, password };
+
+    return fetch(`${endPoint}/register`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user)
+    });
   }
 
-  const register = () => {
+  const register = async () => {
     //check if user name && password in the inputs field - before check validation in the server
     if (fullName === "") {
       Alert.alert("Full Name is required");
@@ -48,6 +50,12 @@ const Register = ({ navigation }) => {
 
     if (email === "") {
       Alert.alert("Email is required");
+      return;
+    }
+
+    const email_reg = /\S+@\S+\.\S+/;
+    if (!email_reg.test(email)) {
+      Alert.alert("Email format is incorrect");
       return;
     }
 
@@ -61,14 +69,28 @@ const Register = ({ navigation }) => {
       return;
     }
 
-    //check if the user already exsit in the server
-    if (ifExsit()) {
-      Alert.alert("Email address already exist, please register with other email address");
+    //save user data in the server 
+    try {
+      const res = await registerUser();
+      //if failed to register at the server
+      if (res.status !== 200) {
+        const data = await res.json();
+        Alert.alert(data.message);
+        return;
+      }
+
+      //register successfully - update storage that the user connected
+      Storage.setItem("userToken", "1")
+        .catch(function (error) {
+          console.log(error);
+        });
+      //redirect the user to main page
+      redirect('AuthLoading');
+
+    } catch (error) {
+      alert(error.message);
       return;
     }
-
-    //save user data in the server 
-    registerUser();
   }
 
   return (
