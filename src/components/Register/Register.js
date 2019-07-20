@@ -63,7 +63,7 @@ const Register = ({ navigation }) => {
 
     //check if the user already exsit in the server
     if (ifExsit()) {
-      Alert.alert("User name already exist, please choose other name");
+      Alert.alert("Email address already exist, please register with other email address");
       return;
     }
 
