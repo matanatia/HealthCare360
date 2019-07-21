@@ -1,7 +1,9 @@
 const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+
 const jsonHeandler = require('../models/json-heandler');
 const valid = require('../models/input-validation');
-const router = express.Router();
 
 //use - api/auth/login   body - email, password
 router.post('/login', async (req, res) => {
@@ -22,8 +24,10 @@ router.post('/login', async (req, res) => {
         const jsonDB = await jsonHeandler.getJson();
 
         //if user not exsit in db or the password is incorrect
-        if (!jsonDB[email] || jsonDB[email].password !== password) {
-            return res.status(401).send({ message: `Email address or password is incorrect` });
+        const validPass = await bcrypt.compare(password, jsonDB[email].password);
+
+        if (!jsonDB[email] || !validPass) {
+            return res.status(400).send({ message: `Email address or password is incorrect` });
         }
 
         res.send({ auth: true });
@@ -57,10 +61,14 @@ router.post('/register', async (req, res) => {
             return res.status(400).send({ message: `User already exist` });
         }
 
+        //hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+
         const new_user = {
             email,
             full_name,
-            password
+            password: hashPassword
         }
 
         jsonDB[new_user.email] = new_user;
