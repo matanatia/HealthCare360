@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import { name as appName } from '../../../app.json';
-import Storage from "../../models/Storage";
 
-const comIp = "192.168.1.185";
-const endPoint = `http://${comIp}:5000/api/auth`;
+import Storage from "../../models/Storage";
+import Valid from "../../models/InputValidation";
+
+import { name as appName } from '../../../app.json';
+import { BACKEND_IP as ip } from '../../../env.json';
+const endPoint = `http://${ip}:5000/api/auth`;
 
 const Login = ({ navigation }) => {
 
@@ -17,16 +19,14 @@ const Login = ({ navigation }) => {
   }
 
   const authenticateUser = () => {
+    const userLogin = { email: userName, password };
     return fetch(`${endPoint}/login`, {
       method: 'POST',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email: userName,
-        password
-      })
+      body: JSON.stringify(userLogin)
     });
   }
 
@@ -34,20 +34,16 @@ const Login = ({ navigation }) => {
 
   const login = async () => {
     //check inputs field before check validation in the server
-    if (userName === "") {
-      Alert.alert("User name is required");
-      return;
+    if (!Valid.required([userName])) {
+      return Alert.alert("User name is required");
     }
 
-    const email_reg = /\S+@\S+\.\S+/;
-    if (!email_reg.test(userName)) {
-      Alert.alert("User name format is incorrect.\nPlease enter your email address");
-      return;
+    if (!Valid.email(userName)) {
+      return Alert.alert("User name format is incorrect","Please enter the email address you registered with");
     }
 
-    if (password === "") {
-      Alert.alert("Password is required");
-      return;
+    if (!Valid.required([password])) {
+      return Alert.alert("Password is required");
     }
 
     try {
@@ -55,8 +51,7 @@ const Login = ({ navigation }) => {
       //if failed to login at the server
       if (res.status !== 200) {
         const data = await res.json();
-        Alert.alert(data.message);
-        return;
+        return Alert.alert(data.message);
       }
 
       //login successfully - update storage that the user connected
@@ -68,8 +63,7 @@ const Login = ({ navigation }) => {
       redirect('App');
 
     } catch (error) {
-      alert(error.message);
-      return;
+      return alert(error.message);
     }
   }
 

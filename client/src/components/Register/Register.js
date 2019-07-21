@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import { name as appName } from '../../../app.json';
-import Storage from "../../models/Storage";
 
-const comIp = "192.168.1.185";
-const endPoint = `http://${comIp}:5000/api/auth`;
+import Storage from "../../models/Storage";
+import Valid from "../../models/InputValidation";
+
+import { name as appName } from '../../../app.json';
+import { BACKEND_IP as ip } from '../../../env.json';
+const endPoint = `http://${ip}:5000/api/auth`;
 
 const Register = ({ navigation }) => {
 
@@ -16,16 +18,6 @@ const Register = ({ navigation }) => {
 
   const redirect = (pageName) => {
     navigation.navigate(pageName);
-  }
-
-  const ifExsit = () => {
-    //check and user in the server
-    const server_user_email = "test";
-
-    if (server_user_email === email) {
-      return true;
-    }
-    return false;
   }
 
   const registerUser = () => {
@@ -43,30 +35,28 @@ const Register = ({ navigation }) => {
 
   const register = async () => {
     //check if user name && password in the inputs field - before check validation in the server
-    if (fullName === "") {
-      Alert.alert("Full Name is required");
-      return;
+    if (!Valid.required([fullName])) {
+      return Alert.alert("Full Name is required");
     }
 
-    if (email === "") {
-      Alert.alert("Email is required");
-      return;
+    if (!Valid.required([email])) {
+      return Alert.alert("Email is required");
     }
 
-    const email_reg = /\S+@\S+\.\S+/;
-    if (!email_reg.test(email)) {
-      Alert.alert("Email format is incorrect");
-      return;
+    if (!Valid.email(email)) {
+      return Alert.alert("Email format is incorrect");
     }
 
-    if (password === "") {
-      Alert.alert("Password is required");
-      return;
+    if (!Valid.required([password])) {
+      return Alert.alert("Password is required");
     }
 
-    if (confPassword === "" || confPassword !== password) {
-      Alert.alert("Please confirm your password");
-      return;
+    if (!Valid.required([confPassword])) {
+      return Alert.alert("Please confirm your password");
+    }
+
+    if (!Valid.equal(confPassword, password)) {
+      return Alert.alert("The passwords doesn't match");
     }
 
     //save user data in the server 
@@ -75,8 +65,7 @@ const Register = ({ navigation }) => {
       //if failed to register at the server
       if (res.status !== 200) {
         const data = await res.json();
-        Alert.alert(data.message);
-        return;
+        return Alert.alert(data.message);
       }
 
       //register successfully - update storage that the user connected

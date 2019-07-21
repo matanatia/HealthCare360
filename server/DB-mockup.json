@@ -1,7 +1,7 @@
 {
-  "test@gmail.com": {
-    "email": "test@gmail.com",
-    "full_name": "matan atiya",
+  "test1@gmail.com": {
+    "email": "test1@gmail.com",
+    "full_name": "test",
     "password": "test"
   }
 }
