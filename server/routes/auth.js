@@ -24,9 +24,13 @@ router.post('/login', async (req, res) => {
         const jsonDB = await jsonHeandler.getJson();
 
         //if user not exsit in db or the password is incorrect
+        if (!jsonDB[email]) {
+            return res.status(400).send({ message: `Email address or password is incorrect` });
+        }
+
         const validPass = await bcrypt.compare(password, jsonDB[email].password);
 
-        if (!jsonDB[email] || !validPass) {
+        if (!validPass) {
             return res.status(400).send({ message: `Email address or password is incorrect` });
         }
 
