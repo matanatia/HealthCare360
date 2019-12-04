@@ -55,4 +55,4 @@ npm run android
 
 **for android please remember to `turn on the simulator` and add `local.properties` file at the android folder before using `npm run android`**
 
-### The user name and password for login is: **user -test@gmail.com, pass - test**, you can register and use your own user name and password
+### The user name and password for login is: **`user - test@gmail.com, pass - test`**, you can register and use your own user name and password
