@@ -1,5 +1,5 @@
 ﻿<p align="center">
-  <img src="./assets/linkedin_banner_image_1.png" alt="React CLI Logo">
+  <img src="./assets/pinterest_board_photo.png" alt="React CLI Logo">
 </p>
 
 # HealthCare360
