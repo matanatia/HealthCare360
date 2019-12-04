@@ -3,31 +3,37 @@
     {
       "idiom" : "iphone",
       "size" : "29x29",
+      "filename" : "app_ic_launcher",
       "scale" : "2x"
     },
     {
       "idiom" : "iphone",
       "size" : "29x29",
+      "filename" : "app_ic_launcher",
       "scale" : "3x"
     },
     {
       "idiom" : "iphone",
       "size" : "40x40",
+      "filename" : "app_ic_launcher",
       "scale" : "2x"
     },
     {
       "idiom" : "iphone",
       "size" : "40x40",
+      "filename" : "app_ic_launcher",
       "scale" : "3x"
     },
     {
       "idiom" : "iphone",
       "size" : "60x60",
+      "filename" : "app_ic_launcher",
       "scale" : "2x"
     },
     {
       "idiom" : "iphone",
       "size" : "60x60",
+      "filename" : "app_ic_launcher_round",
       "scale" : "3x"
     }
   ],
