@@ -1,53 +1,65 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import { name as appName } from '../../../app.json';
-import Storage from "../../models/Storage";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  Alert
+} from "react-native";
 
-const comIp = "192.168.1.185";
-const endPoint = `http://${comIp}:5000/api/auth`;
+//develop
+import Storage from "../../models/Storage";
+import Valid from "../../models/InputValidation";
+
+import { name as appName } from "../../../app.json";
+import {
+  ANDROID_BACKEND_END_POINT,
+  IOS_BACKEND_END_POINT
+} from "../../../env.json";
+
+const endPoint =
+  Platform.OS === "ios"
+    ? `${IOS_BACKEND_END_POINT}/api/auth`
+    : `${ANDROID_BACKEND_END_POINT}/api/auth`;
 
 const Login = ({ navigation }) => {
-
   //testing using react hooks
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  const redirect = (pageName) => {
+  const redirect = pageName => {
     navigation.navigate(pageName);
-  }
+  };
 
   const authenticateUser = () => {
+    const userLogin = { email: userName, password };
     return fetch(`${endPoint}/login`, {
-      method: 'POST',
-      mode: 'cors',
+      method: "POST",
+      mode: "cors",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        email: userName,
-        password
-      })
+      body: JSON.stringify(userLogin)
     });
-  }
-
-
+  };
 
   const login = async () => {
     //check inputs field before check validation in the server
-    if (userName === "") {
-      Alert.alert("User name is required");
-      return;
+    if (!Valid.required([userName])) {
+      return Alert.alert("User name is required");
     }
 
-    const email_reg = /\S+@\S+\.\S+/;
-    if (!email_reg.test(userName)) {
-      Alert.alert("User name format is incorrect.\nPlease enter your email address");
-      return;
+    if (!Valid.email(userName)) {
+      return Alert.alert(
+        "User name format is incorrect",
+        "Please enter the email address you registered with"
+      );
     }
 
-    if (password === "") {
-      Alert.alert("Password is required");
-      return;
+    if (!Valid.required([password])) {
+      return Alert.alert("Password is required");
     }
 
     try {
@@ -55,54 +67,57 @@ const Login = ({ navigation }) => {
       //if failed to login at the server
       if (res.status !== 200) {
         const data = await res.json();
-        Alert.alert(data.message);
-        return;
+        return Alert.alert(data.message);
       }
 
       //login successfully - update storage that the user connected
-      Storage.setItem("userToken", "1")
-        .catch(function (error) {
-          console.log(error);
-        });
+      Storage.setItem("userToken", "1").catch(function(error) {
+        console.log(error);
+      });
       //redirect the user to main page
-      redirect('App');
-
+      redirect("App");
     } catch (error) {
-      alert(error.message);
-      return;
+      return alert(error.message);
     }
-  }
+  };
 
   return (
-    <ImageBackground source={require('../../assets/background.jpg')} style={{ width: "100%", height: "100%" }}>
+    <ImageBackground
+      source={require("../../assets/background.jpg")}
+      style={{ width: "100%", height: "100%" }}
+    >
       <View style={styles.container}>
-
         <Text style={styles.h1}>{appName}</Text>
 
-        <TextInput style={styles.input}
+        <TextInput
+          style={styles.input}
           placeholder="User Name"
-          onChangeText={(text) => setUserName(text)}
-          value={userName} />
+          onChangeText={text => setUserName(text)}
+          value={userName}
+        />
 
-        <TextInput style={styles.input}
+        <TextInput
+          style={styles.input}
           placeholder="Password"
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={text => setPassword(text)}
           secureTextEntry={true}
         />
 
-        <TouchableOpacity onPress={() => login()} style={[styles.btn, { backgroundColor: 'green' }]}>
-          <Text style={[styles.btnText, { color: 'white' }]}>Login</Text>
+        <TouchableOpacity
+          onPress={() => login()}
+          style={[styles.btn, { backgroundColor: "green" }]}
+        >
+          <Text style={[styles.btnText, { color: "white" }]}>Login</Text>
         </TouchableOpacity>
 
         <Text>Not registered?</Text>
-        <TouchableOpacity onPress={() => redirect('Register')} style={{}}>
-          <Text style={{ color: 'green' }}>Create an account</Text>
+        <TouchableOpacity onPress={() => redirect("Register")} style={{}}>
+          <Text style={{ color: "green" }}>Create an account</Text>
         </TouchableOpacity>
-
-      </View >
+      </View>
     </ImageBackground>
   );
-}
+};
 
 //set navigationOptions
 // Login.navigationOptions = {
@@ -111,33 +126,33 @@ const Login = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: "rgba(255,255,255,0.7)",
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
   },
   h1: {
     fontSize: 34,
-    fontWeight: '600',
+    fontWeight: "600",
     color: "green"
   },
   input: {
     width: "90%",
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderBottomWidth: 1
   },
   btn: {
-    display: 'flex',
+    display: "flex",
     padding: 5,
     height: 50,
     width: "50%",
     margin: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
 
     borderRadius: 5,
-    shadowColor: '#000000',
+    shadowColor: "#000000",
     shadowOpacity: 0.4,
     shadowOffset: { height: 10, width: 0 },
     shadowRadius: 20
@@ -146,8 +161,8 @@ const styles = StyleSheet.create({
   btnText: {
     fontWeight: "600",
     fontSize: 19,
-    textTransform: 'uppercase',
-  },
+    textTransform: "uppercase"
+  }
 });
 
 export default Login;
